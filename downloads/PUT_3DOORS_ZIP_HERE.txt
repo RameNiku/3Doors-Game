@@ -1,0 +1,1 @@
+Put the final 3Doors.zip game archive in this folder and keep the filename exactly 3Doors.zip, or edit the link in index.html.
