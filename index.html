@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3Doors by RameNiku</title>
+  <meta name="description" content="3Doors is a black-and-white door-based roguelike about luck, greed, sacrifice, and strange rooms in a merciless tower." />
+  <style>
+    @font-face {
+      font-family: "ThreeDoorsPixel";
+      src: url("assets/fonts/pixel.ttf") format("truetype");
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #000;
+      --fg: #f2f2f2;
+      --muted: #8d8d8d;
+      --dim: #4e4e4e;
+      --panel: #050505;
+      --hover: #1e1e1e;
+      --line: #e8e8e8;
+      --glow: rgba(255,255,255,.22);
+      --soft-glow: rgba(255,255,255,.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "ThreeDoorsPixel", "Lucida Console", "Courier New", monospace;
+      image-rendering: pixelated;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 26% 18%, rgba(255,255,255,.055), transparent 24rem),
+        radial-gradient(circle at 80% 74%, rgba(255,255,255,.038), transparent 22rem),
+        #000;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.026) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 6px 6px;
+      opacity: .28;
+      mix-blend-mode: screen;
+    }
+
+    body, h1, h2, p, li, a, .btn, .caption, .rule-box strong, .rule-box span, code {
+      font-family: "ThreeDoorsPixel", "Lucida Console", "Courier New", monospace;
+    }
+
+    a { color: inherit; }
+
+    .page {
+      width: min(1180px, calc(100% - 34px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 46px;
+      align-items: start;
+      min-height: 100vh;
+      padding: 32px 0;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      letter-spacing: .18em;
+      font-size: .82rem;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(4.3rem, 11vw, 8.8rem);
+      line-height: .82;
+      margin: 0;
+      letter-spacing: -0.08em;
+      text-shadow: 0 0 16px var(--glow), 0 0 42px var(--soft-glow);
+    }
+
+    .byline {
+      margin: 22px 0 62px;
+      color: var(--muted);
+      font-size: clamp(1.1rem, 2vw, 1.45rem);
+      font-weight: 700;
+    }
+
+    .section { margin-top: 58px; }
+    .section:first-of-type { margin-top: 0; }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+      line-height: 1;
+      text-shadow: 0 0 10px var(--glow);
+    }
+
+    p, li {
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.68;
+      max-width: 700px;
+    }
+
+    ul {
+      padding-left: 1.2rem;
+      margin-top: 0;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 24px;
+      border: 2px solid var(--line);
+      background: #000;
+      color: var(--fg);
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: .04em;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 0 24px var(--soft-glow);
+      transition: transform .08s linear, background .08s linear, box-shadow .08s linear;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: var(--hover);
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 0 34px rgba(255,255,255,.16);
+    }
+
+    .btn.secondary {
+      color: var(--muted);
+      border-color: var(--dim);
+    }
+
+    .warning {
+      color: var(--dim);
+      font-size: .92rem;
+      margin-top: 12px;
+    }
+
+    .gallery {
+      display: grid;
+      gap: 26px;
+      position: sticky;
+      top: 28px;
+    }
+
+    .card {
+      border: 3px solid var(--line);
+      background: #000;
+      padding: 12px;
+      box-shadow: 0 0 20px rgba(255,255,255,.07);
+    }
+
+    .card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: grayscale(1) contrast(1.06);
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: .82rem;
+      margin-top: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      max-width: 760px;
+    }
+
+    .rule-box {
+      border: 2px solid var(--dim);
+      padding: 18px;
+      min-height: 118px;
+      background: rgba(255,255,255,.018);
+    }
+
+    .rule-box strong {
+      display: block;
+      color: var(--fg);
+      margin-bottom: 10px;
+      font-size: 1.04rem;
+    }
+
+    .rule-box span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: .94rem;
+    }
+
+    .footer {
+      border-top: 2px solid var(--dim);
+      margin-top: 60px;
+      padding-top: 22px;
+      color: var(--dim);
+      font-size: .92rem;
+    }
+
+    @media (max-width: 920px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .gallery { position: static; grid-template-columns: 1fr; }
+      .rules-grid { grid-template-columns: 1fr; }
+      .byline { margin-bottom: 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-labelledby="title">
+      <div>
+        <div class="eyebrow">luck / unluck / doors / bad decisions</div>
+        <h1 id="title">3Doors</h1>
+        <div class="byline">by RameNiku</div>
+
+        <section class="section" id="download">
+          <h2>Download</h2>
+          <p>Enter the tower as a fullscreen Pygame roguelike. Pick doors, survive terrible luck, collect strange items, and discover what waits above the ordinary rooms.</p>
+          <div class="button-row">
+            <a class="btn" href="downloads/3Doors.zip">DOWNLOAD GAME</a>
+            <a class="btn secondary" href="#rules">READ RULES</a>
+          </div>
+          <p class="warning">Download link expects the final archive at <code>downloads/3Doors.zip</code>.</p>
+        </section>
+
+        <section class="section" id="rules">
+          <h2>Rules</h2>
+          <p>Good luck in the tower. The tower will not return the favor.</p>
+          <div class="rules-grid">
+            <div class="rule-box"><strong>1. Choose a door.</strong><span>Every room hides rewards, danger, or something stranger. Most of the time, the tower refuses to explain itself.</span></div>
+            <div class="rule-box"><strong>2. Use items wisely.</strong><span>Magnifying Glasses, Lucky Charms, Chicken Pies, Tomes, Torches, and other relics can save you, or tempt you into worse decisions.</span></div>
+            <div class="rule-box"><strong>3. Survive bosses.</strong><span>Boss rooms and arenas hit harder, but surviving them earns Golden Skulls for Base Camp upgrades.</span></div>
+            <div class="rule-box"><strong>4. Remember the tower.</strong><span>Endings and fragments unlock hidden memories. The tower is not only a scoreboard; it remembers you too.</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>What kind of game is it?</h2>
+          <p>3Doors is a minimalist door-based roguelike about risk, greed, weird magic, and the feeling that the tower is smiling at you. It begins with three doors. It does not stay that simple.</p>
+        </section>
+      </div>
+
+      <aside class="gallery" aria-label="3Doors screenshots">
+        <figure class="card">
+          <img src="assets/normal.png" alt="Three glowing pixel doors in a dark tower wall" />
+          <figcaption class="caption">Just three doors</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/bones_whispers.png" alt="Pixel art room with bones, sigils, and multiple tower doors" />
+          <figcaption class="caption">Bones and whispers</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/coffee.png" alt="Pixel art coffee stall beside an arched doorway" />
+          <figcaption class="caption">...and coffee?</figcaption>
+        </figure>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      3Doors by RameNiku. Do not trust the tower. Do not trust the doors.
+    </footer>
+  </main>
+</body>
+</html>
